@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>URL Fraud Detection System – Flowchart</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d1117;
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    color: #e6edf3;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  header .tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #58a6ff;
+    border: 1px solid #30363d;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    background: rgba(88,166,255,0.07);
+  }
+
+  header h1 {
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  header p {
+    font-size: 13px;
+    color: #8b949e;
+    font-weight: 300;
+  }
+
+  /* ── FLOWCHART CONTAINER ── */
+  .chart {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── NODES ── */
+  .node {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 24px;
+    border-radius: 10px;
+    border: 1px solid;
+    width: 100%;
+    max-width: 480px;
+    transition: transform 0.2s ease;
+    cursor: default;
+  }
+
+  .box:hover { transform: translateY(-2px); }
+
+  .box .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+  }
+
+  .box .label {
+    flex: 1;
+  }
+
+  .box .label .title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .box .label .sub {
+    font-size: 11.5px;
+    opacity: 0.65;
+    font-weight: 300;
+    line-height: 1.4;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Color themes */
+  .start {
+    background: rgba(88,166,255,0.12);
+    border-color: #58a6ff;
+  }
+  .start .title { color: #79c0ff; }
+
+  .process {
+    background: rgba(56,189,248,0.08);
+    border-color: #0ea5e9;
+  }
+  .process .title { color: #7dd3fc; }
+
+  .ml {
+    background: rgba(139,92,246,0.12);
+    border-color: #8b5cf6;
+  }
+  .ml .title { color: #c4b5fd; }
+
+  .api {
+    background: rgba(20,184,166,0.10);
+    border-color: #14b8a6;
+  }
+  .api .title { color: #5eead4; }
+
+  .nlp {
+    background: rgba(251,146,60,0.10);
+    border-color: #fb923c;
+  }
+  .nlp .title { color: #fdba74; }
+
+  .output {
+    background: rgba(34,197,94,0.10);
+    border-color: #22c55e;
+  }
+  .output .title { color: #86efac; }
+
+  .decision {
+    background: rgba(234,179,8,0.10);
+    border-color: #eab308;
+  }
+  .decision .title { color: #fde047; }
+
+  /* ── ARROWS ── */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 0;
+    height: 36px;
+  }
+
+  .arrow .line {
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(to bottom, #30363d, #444d56);
+  }
+
+  .arrow .tip {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #444d56;
+  }
+
+  .arrow .note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #6e7681;
+    position: absolute;
+    left: calc(50% + 260px);
+    white-space: nowrap;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* ── PARALLEL SECTION (3 branches) ── */
+  .parallel-wrapper {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .branch-connector {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    height: 32px;
+  }
+
+  .branch-connector .horizontal {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    background: #30363d;
+    width: 66%;
+  }
+
+  .branch-connector .vert {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    background: #30363d;
+  }
+
+  .branch-connector .vert.left  { left: calc(50% - 33%); height: 32px; }
+  .branch-connector .vert.mid   { left: 50%; transform: translateX(-50%); height: 32px; }
+  .branch-connector .vert.right { right: calc(50% - 33%); height: 32px; }
+
+  .branches {
+    width: 100%;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  .branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .branch-col .box {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* join arrows */
+  .join-connector {
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+    height: 36px;
+  }
+
+  .join-connector .horizontal {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    background: #30363d;
+    width: 66%;
+  }
+
+  .join-connector .vert {
+    position: absolute;
+    bottom: 0;
+    width: 2px;
+    background: #30363d;
+  }
+
+  .join-connector .vert.left  { left: calc(50% - 33%); height: 36px; }
+  .join-connector .vert.mid   { left: 50%; transform: translateX(-50%); height: 36px; }
+  .join-connector .vert.right { right: calc(50% - 33%); height: 36px; }
+
+  /* ── DECISION DIAMOND ── */
+  .diamond-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+
+  .diamond {
+    width: 160px;
+    height: 80px;
+    background: rgba(234,179,8,0.10);
+    border: 1.5px solid #eab308;
+    transform: perspective(400px) rotateX(12deg);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .diamond .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fde047;
+    margin-bottom: 2px;
+  }
+
+  .diamond .sub {
+    font-size: 10px;
+    color: #8b949e;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Output row */
+  .output-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 860px;
+  }
+
+  .output-pill {
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    border: 1px solid;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .safe-pill   { background: rgba(34,197,94,0.12); border-color: #22c55e; color: #86efac; }
+  .sus-pill    { background: rgba(234,179,8,0.12);  border-color: #eab308; color: #fde047; }
+  .phish-pill  { background: rgba(239,68,68,0.12);  border-color: #ef4444; color: #fca5a5; }
+
+  .output-pill .emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+  .output-pill .score { font-size: 10px; opacity: 0.65; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
+
+  /* Final box */
+  .final-box {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(88,166,255,0.07);
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 18px 24px;
+    text-align: center;
+  }
+
+  .final-box .title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #79c0ff;
+    margin-bottom: 6px;
+  }
+
+  .final-box .sub {
+    font-size: 11.5px;
+    color: #8b949e;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* legend */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 48px;
+    max-width: 860px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6e7681;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .branches, .output-row { grid-template-columns: 1fr; }
+    .branch-connector, .join-connector { display: none; }
+    .arrow .note { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Foundation of Data Science · IOE Pulchowk</div>
+  <h1>Intelligent URL Analysis & Multi-Layered Fraud Detection System</h1>
+  <p>System Architecture & Data Flow Diagram</p>
+</header>
+
+<div class="chart">
+
+  <!-- 1. USER INPUT -->
+  <div class="node">
+    <div class="box start">
+      <div class="icon">🔗</div>
+      <div class="label">
+        <div class="title">User Input</div>
+        <div class="sub">User pastes a URL into the Streamlit dashboard</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 2. FLASK BACKEND -->
+  <div class="node">
+    <div class="box process">
+      <div class="icon">⚙️</div>
+      <div class="label">
+        <div class="title">Flask Backend</div>
+        <div class="sub">Receives URL via HTTP request · Coordinates all modules</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 3. FEATURE EXTRACTION -->
+  <div class="node">
+    <div class="box process">
+      <div class="icon">🔍</div>
+      <div class="label">
+        <div class="title">Feature Extraction Module</div>
+        <div class="sub">Extracts 30+ lexical features · URL length, entropy, special chars, TLD risk, keywords</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRANCH SPLIT -->
+  <div class="branch-connector">
+    <div class="horizontal"></div>
+    <div class="vert left"></div>
+    <div class="vert mid"></div>
+    <div class="vert right"></div>
+  </div>
+
+  <!-- 3 PARALLEL BRANCHES -->
+  <div class="branches">
+
+    <!-- Branch A: ML Model -->
+    <div class="branch-col">
+      <div class="box ml">
+        <div class="label">
+          <div class="icon" style="margin-bottom:6px">🤖</div>
+          <div class="title">ML Classification</div>
+          <div class="sub">Random Forest vs XGBoost · Outputs class + probability score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branch B: NLP -->
+    <div class="branch-col">
+      <div class="box nlp">
+        <div class="label">
+          <div class="icon" style="margin-bottom:6px">📝</div>
+          <div class="title">NLP Analysis</div>
+          <div class="sub">Scrapes page text · Detects urgency &amp; threat language</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branch C: API -->
+    <div class="branch-col">
+      <div class="box api">
+        <div class="label">
+          <div class="icon" style="margin-bottom:6px">🌐</div>
+          <div class="title">URLScan.io API</div>
+          <div class="sub">Remote safe scan · Returns screenshot &amp; metadata</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JOIN BACK -->
+  <div class="join-connector">
+    <div class="horizontal"></div>
+    <div class="vert left"></div>
+    <div class="vert mid"></div>
+    <div class="vert right"></div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 4. K-MEANS CLUSTERING -->
+  <div class="node">
+    <div class="box ml">
+      <div class="icon">🔵</div>
+      <div class="label">
+        <div class="title">K-Means Clustering</div>
+        <div class="sub">Groups URL into fraud pattern clusters · Adds extra context to prediction</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 5. RISK SCORE ENGINE -->
+  <div class="node">
+    <div class="box process">
+      <div class="icon">📊</div>
+      <div class="label">
+        <div class="title">Risk Score Engine</div>
+        <div class="sub">Combines ML score + NLP flags + API result → Final Risk Score (0–100%)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 6. DECISION -->
+  <div class="diamond-wrap">
+    <div class="diamond">
+      <div class="title">Risk Level?</div>
+      <div class="sub">Threshold classification</div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 7. OUTPUT PILLS -->
+  <div class="output-row">
+    <div class="output-pill safe-pill">
+      <span class="emoji">✅</span>
+      Safe
+      <div class="score">Score: 0 – 30%</div>
+    </div>
+    <div class="output-pill sus-pill">
+      <span class="emoji">⚠️</span>
+      Suspicious
+      <div class="score">Score: 31 – 70%</div>
+    </div>
+    <div class="output-pill phish-pill">
+      <span class="emoji">🚨</span>
+      Phishing
+      <div class="score">Score: 71 – 100%</div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="line"></div><div class="tip"></div></div>
+
+  <!-- 8. STREAMLIT DASHBOARD OUTPUT -->
+  <div class="node">
+    <div class="final-box">
+      <div class="title">📱 Streamlit Dashboard Output</div>
+      <div class="sub">
+        Risk Score · Classification Label · Top Features · Explanation Text · URLScan Screenshot Preview
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> User / Interface Layer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0ea5e9"></div> Flask Backend / Processing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Machine Learning (RF / XGBoost / K-Means)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div> NLP Analysis</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#14b8a6"></div> External API (URLScan.io)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Final Output</div>
+</div>
+
+</body>
+</html>

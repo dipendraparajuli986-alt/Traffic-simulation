@@ -2,8 +2,8 @@
 #include "../math/Matrix4.h"
 
 Renderer::Renderer(sf::RenderWindow& window)
-    : m_window(window), m_proj(300.0f, 1200.0f, 700.0f),
-      camera({0, -8, -5}, 0.8f, 0.0f) {}
+    : m_window(window), m_proj(500.0f, 1200.0f, 700.0f),
+      camera({0, -3, -1}, 0.35f, 0.0f) {}
 
 void Renderer::clear(sf::Color color) {
     m_window.clear(color);
