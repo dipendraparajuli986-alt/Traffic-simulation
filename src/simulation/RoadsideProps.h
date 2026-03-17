@@ -52,22 +52,13 @@ struct RoadsideProps {
     }
 
     void draw(Renderer& renderer) {
-        // left side trees
-        drawTree(renderer, {-2.5f, 0, 3});
-        drawTree(renderer, {-2.5f, 0, 5});
-        drawTree(renderer, {-2.5f, 0, 7});
-        drawTree(renderer, {-2.5f, 0, 9});
-        drawTree(renderer, {-2.5f, 0, 11});
-
-        // right side trees
-        drawTree(renderer, {2.5f, 0, 3});
-        drawTree(renderer, {2.5f, 0, 5});
-        drawTree(renderer, {2.5f, 0, 9});
-        drawTree(renderer, {2.5f, 0, 11});
-
-        // poles on right side
-        drawPole(renderer, {2.2f, 0, 4});
-        drawPole(renderer, {2.2f, 0, 7});
-        drawPole(renderer, {2.2f, 0, 10});
+    for (int i = -4; i <= 18; i += 4) {
+        drawTree(renderer, {-2.5f, 0, (float)i});
+        drawTree(renderer, { 2.5f, 0, (float)i});
     }
+
+    for (int i = -3; i <= 18; i += 6) {
+        drawPole(renderer, {2.2f, 0, (float)i});
+    }
+}
 };

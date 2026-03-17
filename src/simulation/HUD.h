@@ -7,8 +7,7 @@ struct HUD {
     bool fontLoaded;
 
     HUD() {
-        fontLoaded = font.openFromFile("/usr/share/fonts/TTF/DejaVuSans.ttf");
-    }
+fontLoaded = font.openFromFile("/usr/share/fonts/TTF/FiraMono-Bold.ttf");    }
 
     void draw(sf::RenderWindow& window, TrafficLight& light) {
         // background panel

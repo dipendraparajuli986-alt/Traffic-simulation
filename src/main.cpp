@@ -9,18 +9,20 @@
 #include "simulation/Pedestrian.h"
 #include "simulation/RoadsideProps.h"
 #include "simulation/HUD.h"
+#include "simulation/TitleScreen.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({1200, 700}), "Highway Simulation");
+    sf::RenderWindow window(sf::VideoMode({1200, 700}), "3D Traffic Simulation");
     Renderer renderer(window);
 
-    Road highway({0, 0, 2}, {0, 0, 12}, 1.5f);
+    Road highway({0, 0, -5}, {0, 0, 25}, 1.5f);
     Background background;
     TrafficLight light({2, 0, 6}, 4.0f);
     ZebraCrossing zebra({0, 0, 7}, 3.0f, 8);
     RoadsideProps props;
     HUD hud;
+    TitleScreen titleScreen;
 
     Car car1({-0.4f, 0, 11}, 3.0f, 7.5f, sf::Color(140, 120, 100));
     Car car2({ 0.4f, 0, 10}, 2.5f, 7.5f, sf::Color(100, 110, 130));
@@ -42,14 +44,18 @@ int main()
         {
             if (event->is<sf::Event::Closed>()) window.close();
 
+            if (!titleScreen.isDone())
+            {
+                titleScreen.handleEvent(*event);
+                continue;
+            }
+
             if (auto* key = event->getIf<sf::Event::KeyPressed>())
             {
                 if (key->code == sf::Keyboard::Key::Escape) window.close();
                 if (key->code == sf::Keyboard::Key::Num1) light.state = LightState::GREEN;
                 if (key->code == sf::Keyboard::Key::Num2) light.state = LightState::RED;
                 if (key->code == sf::Keyboard::Key::Num3) light.state = LightState::YELLOW;
-
-                // reset camera
                 if (key->code == sf::Keyboard::Key::R) {
                     renderer.camera.position = {0, -3, -1};
                     renderer.camera.pitch    = 0.35f;
@@ -57,11 +63,16 @@ int main()
                 }
             }
 
-            // scroll wheel zoom
             if (auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>())
-            {
                 renderer.camera.position.z += scroll->delta * 0.5f;
-            }
+        }
+
+        if (!titleScreen.isDone())
+        {
+            window.clear();
+            titleScreen.draw(window);
+            window.display();
+            continue;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
@@ -80,6 +91,10 @@ int main()
             renderer.camera.pitch -= 1.0f * dt;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
             renderer.camera.pitch += 1.0f * dt;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z))
+            renderer.camera.position.z += 4.0f * dt;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X))
+            renderer.camera.position.z -= 4.0f * dt;
 
         light.update(dt);
         car1.update(dt, light);
