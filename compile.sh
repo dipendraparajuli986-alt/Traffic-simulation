@@ -4,4 +4,4 @@ g++ src/main.cpp src/core/Renderer.cpp \
     -lsfml-graphics -lsfml-window -lsfml-system \
     -o traffic_sim
 
-echo "Done! Run with: ./traffic_sim"
+echo "Yes Boss on your servicce : To run program type -> ./traffic_sim"
