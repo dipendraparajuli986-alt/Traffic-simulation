@@ -14,16 +14,17 @@ struct Car {
         : position(startPos), speed(speed), stopZ(stopZ), color(color), active(true) {}
 
     void update(float dt, TrafficLight& light) {
-        if (!active) return;
+    if (!active) return;
 
-        if (light.isRed() && position.z <= stopZ + 0.1f) return;
+    if ((light.isRed() || light.state == LightState::YELLOW)
+        && position.z > stopZ && position.z < stopZ + 3.0f)
+        return;
 
-        position.z -= speed * dt;
+    position.z -= speed * dt;
 
-        if (position.z < 1.0f) {
-            position.z = 12.0f;
-        }
-    }
+    if (position.z < 1.0f)
+        position.z = 20.0f;
+}
 
     void draw(Renderer& renderer) {
         if (!active) return;

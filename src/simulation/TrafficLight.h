@@ -8,38 +8,75 @@ struct TrafficLight {
     Vec3 position;
     LightState state;
     float timer;
-    float switchTime;
+    float greenTime;
+    float yellowTime;
+    float redTime;
+    float pedWalkTime;
+    bool pedCanWalk;
 
-    TrafficLight(Vec3 position, float switchTime = 3.0f)
-        : position(position), state(LightState::GREEN), timer(0), switchTime(switchTime) {}
+    TrafficLight(Vec3 position, float greenTime = 5.0f, float yellowTime = 2.0f, float redTime = 6.0f)
+        : position(position), state(LightState::GREEN),
+          timer(0), greenTime(greenTime), yellowTime(yellowTime),
+          redTime(redTime), pedWalkTime(0), pedCanWalk(false) {}
 
     void update(float dt) {
         timer += dt;
-        if (timer >= switchTime) {
-            timer = 0;
-            if      (state == LightState::GREEN)  state = LightState::YELLOW;
-            else if (state == LightState::YELLOW) state = LightState::RED;
-            else if (state == LightState::RED)    state = LightState::GREEN;
+
+        if (state == LightState::GREEN) {
+            pedCanWalk = false;
+            if (timer >= greenTime) {
+                timer = 0;
+                state = LightState::YELLOW;
+            }
+        }
+        else if (state == LightState::YELLOW) {
+            pedCanWalk = false;
+            if (timer >= yellowTime) {
+                timer = 0;
+                pedWalkTime = 0;
+                state = LightState::RED;
+            }
+        }
+        else if (state == LightState::RED) {
+            // pedestrians chai red light ko 75% part ma hinxan
+            pedWalkTime += dt;
+            if (pedWalkTime < redTime * 0.75f)
+                pedCanWalk = true;
+            else
+                pedCanWalk = false;
+
+            if (timer >= redTime) {
+                timer = 0;
+                state = LightState::GREEN;
+            }
         }
     }
 
-    bool isRed()    { return state == LightState::RED;   }
-    bool isGreen()  { return state == LightState::GREEN; }
+    bool isRed()   { return state == LightState::RED;    }
+    bool isGreen() { return state == LightState::GREEN;  }
 
     void draw(Renderer& renderer) {
-        Vec2 poleBase = renderer.project({position.x, position.y + 0.1f, position.z});
-        Vec2 poleTop  = renderer.project({position.x, position.y - 2.0f, position.z});
+        Vec2 poleBase = renderer.project({position.x, position.y + 0.1f,  position.z});
+        Vec2 poleMid  = renderer.project({position.x, position.y - 1.0f,  position.z});
+        Vec2 poleTop  = renderer.project({position.x, position.y - 2.0f,  position.z});
 
         for (int i = -2; i <= 2; i++) {
             renderer.drawLine(
                 {poleBase.x + i, poleBase.y},
-                {poleTop.x  + i, poleTop.y},
+                {poleMid.x  + i, poleMid.y},
+                sf::Color(100, 100, 100)
+            );
+        }
+        for (int i = -1; i <= 1; i++) {
+            renderer.drawLine(
+                {poleMid.x + i, poleMid.y},
+                {poleTop.x + i, poleTop.y},
                 sf::Color(120, 120, 120)
             );
         }
 
-        Vec3 hbl = {position.x - 0.15f, position.y - 1.2f, position.z};
-        Vec3 hbr = {position.x + 0.15f, position.y - 1.2f, position.z};
+        Vec3 hbl = {position.x - 0.15f, position.y - 1.1f, position.z};
+        Vec3 hbr = {position.x + 0.15f, position.y - 1.1f, position.z};
         Vec3 htl = {position.x - 0.15f, position.y - 2.0f, position.z};
         Vec3 htr = {position.x + 0.15f, position.y - 2.0f, position.z};
 

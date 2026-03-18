@@ -26,38 +26,28 @@ struct RoadsideProps {
     }
 
     void drawTree(Renderer& renderer, Vec3 position) {
-        Vec2 base = renderer.project({position.x, position.y,        position.z});
-        Vec2 top  = renderer.project({position.x, position.y - 1.5f, position.z});
+    Vec2 base = renderer.project({position.x, position.y,        position.z});
+    Vec2 top  = renderer.project({position.x, position.y - 1.5f, position.z});
 
-        // trunk
-        for (int i = -2; i <= 2; i++) {
-            renderer.drawLine(
-                {base.x + i, base.y},
-                {top.x  + i, top.y},
-                sf::Color(100, 60, 20)
-            );
-        }
+    for (int i = -2; i <= 2; i++)
+        renderer.drawLine({base.x + i, base.y}, {top.x + i, top.y}, sf::Color(100, 60, 20));
 
-        // 3 layers of foliage
-        Vec2 f1 = renderer.project({position.x, position.y - 1.5f, position.z});
-        Vec2 f2 = renderer.project({position.x, position.y - 2.2f, position.z});
-        Vec2 f3 = renderer.project({position.x, position.y - 2.8f, position.z});
+    Vec2 f1 = renderer.project({position.x, position.y - 1.5f, position.z});
+    Vec2 f2 = renderer.project({position.x, position.y - 2.0f, position.z});
 
-        for (int r = 18; r >= 0; r--)
-            renderer.drawCircle(f1.x, f1.y, r, sf::Color(30 + r, 100 + r, 30));
-        for (int r = 15; r >= 0; r--)
-            renderer.drawCircle(f2.x, f2.y, r, sf::Color(30 + r, 110 + r, 30));
-        for (int r = 10; r >= 0; r--)
-            renderer.drawCircle(f3.x, f3.y, r, sf::Color(40 + r, 120 + r, 40));
-    }
+    for (int r = 12; r >= 0; r--)
+        renderer.drawCircle(f1.x, f1.y, r, sf::Color(30 + r, 100 + r, 30));
+    for (int r = 9; r >= 0; r--)
+        renderer.drawCircle(f2.x, f2.y, r, sf::Color(30 + r, 110 + r, 30));
+}
 
     void draw(Renderer& renderer) {
-    for (int i = -4; i <= 18; i += 4) {
+    for (int i = -4; i <= 8; i += 4) {
         drawTree(renderer, {-2.5f, 0, (float)i});
         drawTree(renderer, { 2.5f, 0, (float)i});
     }
 
-    for (int i = -3; i <= 18; i += 6) {
+    for (int i = -3; i <= 8; i += 6) {
         drawPole(renderer, {2.2f, 0, (float)i});
     }
 }

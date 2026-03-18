@@ -12,22 +12,44 @@ struct Pedestrian {
     float t;
     sf::Color shirtColor;
     sf::Color pantsColor;
+    bool crossing;
+    bool hasStarted;
 
     Pedestrian(Vec3 start, Vec3 end, float speed, sf::Color shirtColor, sf::Color pantsColor)
-        : start(start), end(end), speed(speed), shirtColor(shirtColor), pantsColor(pantsColor), t(0)
+        : start(start), end(end), speed(speed),
+          shirtColor(shirtColor), pantsColor(pantsColor),
+          t(0), crossing(false), hasStarted(false)
     {
         position = start;
     }
 
     void update(float dt, TrafficLight& light) {
-        if (light.isGreen()) return;
+        if (hasStarted == true) {
+            t += speed * dt;
 
-        t += speed * dt;
-        if (t > 1.0f) t = 0.0f;
+            if (t >= 1.0f) {
+                t = 1.0f;
+                position = end;
+                hasStarted = false;
+                return;
+            }
 
-        position.x = start.x + t * (end.x - start.x);
-        position.y = start.y + t * (end.y - start.y);
-        position.z = start.z + t * (end.z - start.z);
+            position.x = start.x + t * (end.x - start.x);
+            position.y = start.y + t * (end.y - start.y);
+            position.z = start.z + t * (end.z - start.z);
+            return;
+        }
+
+        if (light.isGreen()) {
+            t = 0;
+            position = start;
+            hasStarted = false;
+            return;
+        }
+
+        if (!light.pedCanWalk) return;
+
+        hasStarted = true;
     }
 
     void draw(Renderer& renderer) {
@@ -90,13 +112,13 @@ struct Pedestrian {
         );
 
         renderer.drawLine(
-            {pos.x - 2 + legSwing,        pos.y + 11},
-            {pos.x - 2 + legSwing - 3.0f, pos.y + 12},
+            {pos.x - 2 + legSwing,         pos.y + 11},
+            {pos.x - 2 + legSwing - 3.0f,  pos.y + 12},
             sf::Color(40, 20, 10)
         );
         renderer.drawLine(
-            {pos.x + 2 - legSwing,        pos.y + 11},
-            {pos.x + 2 - legSwing + 3.0f, pos.y + 12},
+            {pos.x + 2 - legSwing,         pos.y + 11},
+            {pos.x + 2 - legSwing + 3.0f,  pos.y + 12},
             sf::Color(40, 20, 10)
         );
     }
