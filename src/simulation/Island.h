@@ -12,7 +12,6 @@ struct Island {
         Vec2 sb = renderer.project(b);
         Vec2 sc = renderer.project(c);
 
-        // grass fill
         std::vector<sf::Vector2f> triangle = {
             {sa.x, sa.y},
             {sb.x, sb.y},
@@ -20,12 +19,10 @@ struct Island {
         };
         renderer.fillPolygon(triangle, sf::Color(34, 139, 34));
 
-        // border
         renderer.drawLine(sa, sb, sf::Color(20, 100, 20));
         renderer.drawLine(sb, sc, sf::Color(20, 100, 20));
         renderer.drawLine(sc, sa, sf::Color(20, 100, 20));
 
-        // inner grass detail
         Vec2 center = {
             (sa.x + sb.x + sc.x) / 3.0f,
             (sa.y + sb.y + sc.y) / 3.0f

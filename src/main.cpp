@@ -117,8 +117,8 @@ int main()
         ped3.update(dt, light);
 
         renderer.clear(sf::Color(35, 35, 35));
-        background.draw(window, renderer, 1200, 700);
-        highway.draw(renderer);
+Vec2 vanishPoint = renderer.project({0, 0, 25});
+background.draw(window, renderer, 1200, 700, vanishPoint.y);        highway.draw(renderer);
         props.draw(renderer);
         zebra.draw(renderer);
         light.draw(renderer);

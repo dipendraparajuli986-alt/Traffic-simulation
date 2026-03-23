@@ -6,9 +6,9 @@
 
 struct Background {
 
-    void drawSky(sf::RenderWindow& window, int screenW, int screenH) {
-        for (int y = 0; y < screenH / 2; y++) {
-            float t = (float)y / (screenH / 2);
+    void drawSky(sf::RenderWindow& window, int screenW, float horizonY) {
+        for (int y = 0; y < horizonY; y++) {
+            float t = (float)y / horizonY;
             sf::Color top    = sf::Color(20,  40,  80);
             sf::Color bottom = sf::Color(100, 140, 180);
             sf::Color color  = sf::Color(
@@ -23,31 +23,27 @@ struct Background {
         }
     }
 
-    void drawGrass(sf::RenderWindow& window, Renderer& renderer, int screenW, int screenH) {
-        sf::RectangleShape grass(sf::Vector2f(screenW, screenH / 2));
-        grass.setPosition(sf::Vector2f(0, screenH / 2));
+    void drawGrass(sf::RenderWindow& window, int screenW, int screenH, float horizonY) {
+        sf::RectangleShape grass(sf::Vector2f(screenW, screenH - horizonY));
+        grass.setPosition(sf::Vector2f(0, horizonY));
         grass.setFillColor(sf::Color(34, 100, 34));
         window.draw(grass);
     }
 
     void drawMountains(sf::RenderWindow& window, int screenW, int screenH) {
-        // bezier curve mountains
         struct BezierMountain {
             float x1, y1, x2, y2, x3, y3, x4, y4;
             sf::Color color;
         };
 
         BezierMountain mountains[] = {
-            {0,    400, 100, 150, 300, 150, 400, 400, sf::Color(60,  80,  60)},
-            {200,  400, 350, 100, 550, 100, 700, 400, sf::Color(50,  70,  50)},
-            {500,  400, 650, 180, 850, 180, 1000,400, sf::Color(70,  90,  70)},
-            {800,  400, 950, 120, 1100,120, 1200,400, sf::Color(55,  75,  55)},
-            {-100, 400, 50,  200, 250, 200, 350, 400, sf::Color(65,  85,  65)}
-        };
-
+    {0,    350, 100, 100, 300, 100, 400, 350, sf::Color(60,  80,  60)},
+    {200,  350, 350,  50, 550,  50, 700, 350, sf::Color(50,  70,  50)},
+    {500,  350, 650, 130, 850, 130, 1000,350, sf::Color(70,  90,  70)},
+    {800,  350, 950,  70, 1100, 70, 1200,350, sf::Color(55,  75,  55)},
+    {-100, 350,  50, 150, 250, 150,  350, 350, sf::Color(65,  85,  65)}
+};
         for (auto& m : mountains) {
-            // fill mountain using scanline
-            // collect bezier points
             std::vector<sf::Vector2f> points;
             points.push_back({m.x1, m.y1});
 
@@ -64,7 +60,6 @@ struct Background {
             }
             points.push_back({m.x4, m.y4});
 
-            // fill using scanline directly on window
             float minY = points[0].y, maxY = points[0].y;
             for (auto& p : points) {
                 if (p.y < minY) minY = p.y;
@@ -93,9 +88,9 @@ struct Background {
         }
     }
 
-    void draw(sf::RenderWindow& window, Renderer& renderer, int screenW, int screenH) {
-        drawSky(window, screenW, screenH);
+    void draw(sf::RenderWindow& window, Renderer& renderer, int screenW, int screenH, float horizonY) {
+        drawSky(window, screenW, horizonY);
         drawMountains(window, screenW, screenH);
-        drawGrass(window, renderer, screenW, screenH);
+        drawGrass(window, screenW, screenH, horizonY);
     }
 };
